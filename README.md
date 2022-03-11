@@ -1,10 +1,10 @@
-# lol 对局先知
+# LOL牛马分析
 
-qq 群: 102158075
+### 根据作者@buffge开源修改而成 项目地址为https://github.com/real-web-world/hh-lol-prophet/
 
-网站: [https://lol.buffge.com](https://lol.buffge.com)
+### 主要差别为 去除GUI 界面  软件体积及操作进行精简化
 
-[下载地址](https://lol.buffge.com)
+
 
 ### 程序逻辑
    - 监控lol client
