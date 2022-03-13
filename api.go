@@ -9,8 +9,8 @@ import (
 	"github.com/real-web-world/hh-lol-prophet/conf"
 	"github.com/real-web-world/hh-lol-prophet/global"
 	ginApp "github.com/real-web-world/hh-lol-prophet/pkg/gin"
-	"github.com/real-web-world/hh-lol-prophet/services/models"
 	"github.com/real-web-world/hh-lol-prophet/services/lcu"
+	"github.com/real-web-world/hh-lol-prophet/services/models"
 )
 
 type (

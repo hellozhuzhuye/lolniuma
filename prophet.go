@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/atotto/clipboard"
+	"github.com/avast/retry-go"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 	"github.com/real-web-world/hh-lol-prophet/global"
@@ -71,7 +72,7 @@ func NewProphet() *Prophet {
 func (p Prophet) Run() error {
 	go p.MonitorStart()
 	go p.captureStartMessage()
-	log.Printf("%s已启动 v%s -- %s", global.AppName, APPVersion, global.WebsiteTitle)
+	log.Printf("%s已启动 v%s -- %s  有问题联系作者微信xjx8260", global.AppName, APPVersion, global.WebsiteTitle)
 	return p.notifyQuit()
 }
 func (p *Prophet) captureStartMessage() {
@@ -157,11 +158,19 @@ func (p Prophet) initGameFlowMonitor(port int, authPwd string) error {
 		logger.Error("连接到lcu ws 失败", zap.Error(err))
 		return err
 	}
-	p.lcuActive = true
-	// if global.IsDevMode() {
-	// 	lcu.ChampionSelectStart()
-	// }
 	defer c.Close()
+	err = retry.Do(func() error {
+		currSummoner, err := lcu.GetCurrSummoner()
+		if err == nil {
+			p.currSummoner = currSummoner
+		}
+		return err
+	}, retry.Attempts(5), retry.Delay(time.Second))
+	if err != nil {
+		return errors.New("获取当前召唤师信息失败:" + err.Error())
+	}
+	p.lcuActive = true
+
 	_ = c.WriteMessage(websocket.TextMessage, []byte("[5, \"OnJsonApiEvent\"]"))
 	for {
 		msgType, message, err := c.ReadMessage()
@@ -255,8 +264,8 @@ func (p Prophet) ChampionSelectStart() {
 		if len(currKDAMsg) > 0 {
 			currKDAMsg = currKDAMsg[:len(currKDAMsg)-1]
 		}
-		msg := fmt.Sprintf("我方%s(%d): %s %s  by %s", horse, int(scoreInfo.Score), scoreInfo.SummonerName,
-			currKDAMsg, "lol.smartsoftware.top")
+		msg := fmt.Sprintf("\n我方%s(%d): %s %s 最近10场战绩: %s  by %s", horse, int(scoreInfo.Score), scoreInfo.SummonerName,
+			scoreInfo.WinningPercentage, currKDAMsg, "lol.smartsoftware.top")
 		allMsg += msg + "\n"
 		<-sendConversationMsgDelayCtx.Done()
 		_ = SendConversationMsg(msg, conversationID)
@@ -287,7 +296,7 @@ func (p Prophet) CalcEnemyTeamScore() {
 	_ = selfTeamUsers
 	summonerIDList := enemyTeamUsers
 
-	logger.Debug("敌方队伍人员列表:", zap.Any("summonerIDList", summonerIDList))
+	// logger.Debug("敌方队伍人员列表:", zap.Any("summonerIDList", summonerIDList))
 	if len(summonerIDList) == 0 {
 		return
 	}
@@ -343,7 +352,7 @@ func (p Prophet) CalcEnemyTeamScore() {
 		if len(currKDAMsg) > 0 {
 			currKDAMsg = currKDAMsg[:len(currKDAMsg)-1]
 		}
-		msg := fmt.Sprintf("敌方%s(%d): %s %s  -- %s", horse, int(scoreInfo.Score), scoreInfo.SummonerName,
+		msg := fmt.Sprintf("\n敌方%s(%d): %s %s  -- %s", horse, int(scoreInfo.Score), scoreInfo.SummonerName,
 			currKDAMsg, "lol.smartsoftware.top")
 		allMsg += msg + "\n"
 	}

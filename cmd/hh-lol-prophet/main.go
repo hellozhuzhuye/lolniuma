@@ -1,6 +1,7 @@
 package main
 
 import (
+	"C"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -26,6 +27,16 @@ const (
 	updateApi   = "https://lol.buffge.com/latestApp.json"
 )
 
+//export UserScore
+type (
+	UserScore struct {
+		SummonerID        int64    `json:"summonerID"`
+		SummonerName      string   `json:"summonerName"`
+		Score             float64  `json:"score"`
+		CurrKDA           [][3]int `json:"currKDA"`
+		WinningPercentage string   `json:"winningPercentage"`
+	}
+)
 type (
 	AppUpdateInfo struct {
 		Version     string `json:"version"`
@@ -215,4 +226,19 @@ func selfUpdate() error {
 	}
 	os.Exit(0)
 	return nil
+}
+
+//export GetUserScoreBySummonerID
+func GetUserScoreBySummonerID(summonerID int64) string {
+	scoreInfo, err := app.GetUserScore(summonerID)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err.Error()
+	}
+	res, err := json.Marshal(scoreInfo)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(res)
+	return string(res)
 }

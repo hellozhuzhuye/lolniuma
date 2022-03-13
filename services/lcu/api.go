@@ -832,7 +832,7 @@ func QueryGameSummary(gameID int64) (*GameSummary, error) {
 	data := &GameSummary{}
 	err = json.Unmarshal(bts, data)
 	if err != nil {
-		logger.Info("查询对局详情失败", zap.Error(err))
+		// logger.Info("查询对局详情失败", zap.Error(err))
 		return nil, err
 	}
 	if data.CommonResp.ErrorCode != "" {

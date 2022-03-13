@@ -1,6 +1,7 @@
 package hh_lol_prophet
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -17,12 +18,14 @@ import (
 	"github.com/real-web-world/hh-lol-prophet/services/logger"
 )
 
+//export UserScore
 type (
 	UserScore struct {
-		SummonerID   int64    `json:"summonerID"`
-		SummonerName string   `json:"summonerName"`
-		Score        float64  `json:"score"`
-		CurrKDA      [][3]int `json:"currKDA"`
+		SummonerID        int64    `json:"summonerID"`
+		SummonerName      string   `json:"summonerName"`
+		Score             float64  `json:"score"`
+		CurrKDA           [][3]int `json:"currKDA"`
+		WinningPercentage string   `json:"winningPercentage"`
 	}
 )
 
@@ -110,6 +113,7 @@ func getSummonerIDListFromConversationMsgList(msgList []lcu.ConversationMsg) []i
 	return summonerIDList
 }
 
+//export GetUserScore
 func GetUserScore(summonerID int64) (*UserScore, error) {
 	userScoreInfo := &UserScore{
 		SummonerID: summonerID,
@@ -127,6 +131,16 @@ func GetUserScore(summonerID int64) (*UserScore, error) {
 		logger.Error("获取用户战绩失败", zap.Error(err), zap.Int64("id", summonerID))
 		return userScoreInfo, nil
 	}
+	// 计算最近20场胜率
+	winSum := 0
+	for _, info := range gameList {
+		// log.Printf("%v", info.Participants[0].Stats.Win)
+		if info.Participants[0].Stats.Win {
+			winSum++
+		}
+	}
+	userScoreInfo.WinningPercentage = fmt.Sprintf("最近20场胜率:%d%s", winSum*100/20, "%")
+
 	// 获取每一局战绩
 	g := errgroup.Group{}
 	gameSummaryList := make([]lcu.GameSummary, 0, len(gameList))
@@ -147,7 +161,7 @@ func GetUserScore(summonerID int64) (*UserScore, error) {
 				return tmpErr
 			}, retry.Delay(time.Millisecond*10), retry.Attempts(5))
 			if err != nil {
-				logger.Error("获取游戏对局详细信息失败", zap.Error(err), zap.Int64("id", info.GameId))
+				// logger.Error("获取游戏对局详细信息失败", zap.Error(err), zap.Int64("id", info.GameId))
 				return nil
 			}
 			mu.Lock()
