@@ -331,15 +331,13 @@ func (p Prophet) CalcEnemyTeamScore() {
 	}
 	scoreCfg := global.GetScoreConf()
 	allMsg := ""
-	// 发送到选人界面
+	
 	for _, scoreInfo := range summonerIDMapScore {
 		time.Sleep(time.Second / 2)
 		var horse string
-		// horseIdx := 0
 		for _, v := range scoreCfg.Horse {
 			if scoreInfo.Score >= v.Score {
 				horse = v.Name
-				// horseIdx = i
 				break
 			}
 		}
@@ -352,7 +350,7 @@ func (p Prophet) CalcEnemyTeamScore() {
 		if len(currKDAMsg) > 0 {
 			currKDAMsg = currKDAMsg[:len(currKDAMsg)-1]
 		}
-		msg := fmt.Sprintf("\n我方%s(%d): %s %s 最近10场战绩: %s  by %s", horse, int(scoreInfo.Score), scoreInfo.SummonerName,
+		msg := fmt.Sprintf("\n敌方%s(%d): %s %s 最近10场战绩: %s  by %s", horse, int(scoreInfo.Score), scoreInfo.SummonerName,
 			scoreInfo.WinningPercentage, currKDAMsg, "lol.smartsoftware.top")
 		allMsg += msg + "\n"
 	}
