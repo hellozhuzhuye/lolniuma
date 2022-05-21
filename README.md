@@ -5,7 +5,7 @@
 ### 主要差别为 去除GUI 界面  软件体积及操作进行精简化
 
 ### 程序运行截图
-![avatar](./%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E6%88%AA%E5%9B%BE.png)
+![avatar](https://raw.githubusercontent.com/hellozhuzhuye/lolniuma/main/%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E6%88%AA%E5%9B%BE.png)
 
 
 ### 程序逻辑
