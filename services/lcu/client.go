@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
 )
 
 const (
@@ -67,6 +68,7 @@ func (cli client) req(method string, url string, data interface{}) ([]byte, erro
 		}
 		body = bytes.NewReader(bts)
 	}
+	fmt.Println(cli.baseUrl+url)
 	req, _ := http.NewRequest(method, cli.baseUrl+url, body)
 	if req.Body != nil {
 		req.Header.Add("ContentType", "application/json")

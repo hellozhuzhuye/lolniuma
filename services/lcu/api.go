@@ -741,6 +741,8 @@ func GetCurrConversationID() (string, error) {
 		return "", err
 	}
 	list := make([]Conversation, 0, 1)
+	logger.Info("bts:", bts)
+	logger.Info("list:", list)
 	err = json.Unmarshal(bts, &list)
 	if err != nil {
 		logger.Info("获取当前对局聊天组失败", zap.Error(err))

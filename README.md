@@ -1,6 +1,6 @@
 # LOL牛马分析
 
-### 根据作者@buffge开源修改而成 项目地址为https://github.com/real-web-world/hh-lol-prophet/
+### 软件下载地址 http://lol.smartsoftware.top
 
 ### 主要差别为 去除GUI 界面  软件体积及操作进行精简化
 
