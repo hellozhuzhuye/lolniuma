@@ -1,7 +1,5 @@
 # LOL牛马分析
 
-### 软件下载地址 http://lol.smartsoftware.top
-
 ### 主要差别为 去除GUI 界面  软件体积及操作进行精简化
 
 ### 程序运行截图
